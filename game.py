@@ -2,10 +2,12 @@
 
 # Import and initialize pygame
 import pygame
+from random import randint
 pygame.init()
 
 # Configure the screen
 screen = pygame.display.set_mode([500, 500])
+clock = pygame.time.Clock()
 
 class GameObject(pygame.sprite.Sprite):
   def __init__(self, x, y, image):
@@ -19,10 +21,26 @@ class GameObject(pygame.sprite.Sprite):
   def render(self, screen):
     screen.blit(self.surf, (self.x, self.y))
 
-# Make an instance of GameObject
-# box = GameObject(120, 300, 50, 50)
-apple = GameObject(120, 300, 'images/apple.png')
+class Apple(GameObject):
+ def __init__(self):
+   super(Apple, self).__init__(0, 0, './images/apple.png')
+   self.dx = 0
+   self.dy = (randint(0, 200) / 100) + 1
+   self.reset() # call reset here! 
 
+ def move(self):
+   self.x += self.dx
+   self.y += self.dy
+   # Check the y position of the apple
+   if self.y > 500: 
+     self.reset()
+
+ # add a new method
+ def reset(self):
+   self.x = randint(50, 400)
+   self.y = -64
+
+apple = Apple()
 # Create the game loop
 running = True
 while running:
@@ -33,10 +51,11 @@ while running:
 
     # Clear screen
     screen.fill((255, 255, 255))
-
-    # Draw the box
-    # box.render(screen)
+# Draw apple
+    apple.move()
     apple.render(screen)
     
     # Update the window
     pygame.display.flip()
+    clock.tick(60)
+
