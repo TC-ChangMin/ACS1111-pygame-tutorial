@@ -22,23 +22,23 @@ class GameObject(pygame.sprite.Sprite):
     screen.blit(self.surf, (self.x, self.y))
 
 class Apple(GameObject):
- def __init__(self):
-   super(Apple, self).__init__(0, 0, './images/apple.png')
-   self.dx = 0
-   self.dy = (randint(0, 200) / 100) + 1
-   self.reset() # call reset here! 
+  def __init__(self):
+    super(Apple, self).__init__(0, 0, './images/apple.png')
+    self.dx = 0
+    self.dy = (randint(0, 200) / 100) + 1
+    self.reset() # call reset here! 
 
- def move(self):
-   self.x += self.dx
-   self.y += self.dy
-   # Check the y position of the apple
-   if self.y > 500: 
-     self.reset()
+  def move(self):
+    self.x += self.dx
+    self.y += self.dy
+    # Check the y position of the apple
+    if self.y > 500: 
+      self.reset()
 
- # add a new method
- def reset(self):
-   self.x = randint(50, 400)
-   self.y = -64
+# add a new method
+  def reset(self):
+    self.x = randint(50, 400)
+    self.y = -64
 
 
 class Player(GameObject):
@@ -73,7 +73,7 @@ player = Player()
 # Create the game loop
 running = True
 while running:
-    # Look at events
+# Look at events
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
@@ -89,16 +89,15 @@ while running:
       elif event.key == pygame.K_DOWN:
         player.down()
 
-    # Clear screen
-    screen.fill((255, 255, 255))
-# Draw apple
-    apple.move()
-    apple.render(screen)
-# Draw player
-    player.move()
-    player.render(screen)
-    
-    # Update the window
-    pygame.display.flip()
-    clock.tick(60)
+  screen.fill((255, 255, 255))
+  # Draw apple
+  apple.move()
+  apple.render(screen)
+  # Draw player
+  player.move()
+  player.render(screen)
+
+  # Update the window
+  pygame.display.flip()
+  clock.tick(60)
 
