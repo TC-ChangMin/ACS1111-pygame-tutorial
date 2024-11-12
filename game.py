@@ -15,8 +15,11 @@ class GameObject(pygame.sprite.Sprite):
     self.surf = pygame.image.load(image)
     self.x = x
     self.y = y
+    self.rect = self.surf.get_rect()
 
   def render(self, screen):
+    self.rect.x = self.x
+    self.rect.y = self.y
     screen.blit(self.surf, (self.x, self.y))
 
 # ----------------------------------------------
@@ -40,6 +43,8 @@ class Apple(GameObject):
 
 # ----------------------------------------------
 # Strawberry
+
+
 class Strawberry(GameObject):
   def __init__(self):
     super(Strawberry, self).__init__(0, 0, './images/strawberry.png')
@@ -58,6 +63,46 @@ class Strawberry(GameObject):
     self.y = choice(lanes)
 
 
+# -------------------------------------------
+# Bomb
+
+class Bomb(GameObject):
+  def __init__(self):
+    super(Bomb, self).__init__(0, 0, './images/bomb.png')
+    self.dx = 0
+    self.dy = 0
+    self.reset()
+
+  def move(self):
+    self.x += self.dx
+    self.y += self.dy
+    if self.x > 500 or self.x < -64 or self.y > 500 or self.y < -64:
+      self.reset()
+
+  def reset(self):
+    direction = randint(1, 4)
+    if direction == 1: # left
+      self.x = -64
+      self.y = choice(lanes)
+      self.dx = (randint(0, 200) / 100) + 1
+      self.dy = 0
+    elif direction == 2: # right
+      self.x = 500
+      self.y = choice(lanes)
+      self.dx = ((randint(0, 200) / 100) + 1) * -1
+      self.dy = 0
+    elif direction == 3: # down
+      self.x = choice(lanes)
+      self.y = -64
+      self.dx = 0
+      self.dy = (randint(0, 200) / 100) + 1
+    else:
+      self.x = choice(lanes)
+      self.y = 500
+      self.dx = 0
+      self.dy = ((randint(0, 200) / 100) + 1) * -1
+
+    
 # -------------------------------------------
 # Player
 
@@ -111,18 +156,26 @@ class Player(GameObject):
 
 # Make a group
 all_sprites = pygame.sprite.Group()
+# make a fruits Group
+fruit_sprites = pygame.sprite.Group()
 
 # Make Fruit instances
 apple = Apple()
 strawberry = Strawberry()
+fruit_sprites.add(apple)
+fruit_sprites.add(strawberry)
 
 # make instance of Player
 player = Player()
+
+# make bomb
+bomb = Bomb()
 
 # Add sprites to group
 all_sprites.add(player)
 all_sprites.add(apple)
 all_sprites.add(strawberry)
+all_sprites.add(bomb)
 
 # Get the clock
 clock = pygame.time.Clock()
@@ -153,6 +206,17 @@ while running:
   for entity in all_sprites:
     entity.move()
     entity.render(screen)
+    if entity != player: 
+      pass
+  # Check Colisions
+  fruit = pygame.sprite.spritecollideany(player, fruit_sprites)
+  if fruit:
+    fruit.reset()
+
+  # Check collision player and bomb
+  if pygame.sprite.collide_rect(player, bomb):
+    running = False
+
   # Update the window
   pygame.display.flip()
 
